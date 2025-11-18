@@ -99,6 +99,8 @@ export function useMoleculeViewer() {
     }
   })
 
+  const hasFirstAtom = computed(() => measureAtom1.value !== null)
+
   // ==========================================================================
   // VIEWER INITIALIZATION
   // ==========================================================================
@@ -472,6 +474,7 @@ export function useMoleculeViewer() {
     // Computed
     currentMoleculeName,
     moleculeStats,
+    hasFirstAtom,
 
     // Methods
     loadMolecule,

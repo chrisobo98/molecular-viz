@@ -57,6 +57,8 @@
           <!-- Distance Measurement -->
           <MoleculesMeasurementCard
             :distance="measurementDistance"
+            :measure-mode="measureMode"
+            :has-first-atom="hasFirstAtom"
             @clear="clearMeasurement"
           />
         </div>
@@ -137,6 +139,7 @@ const {
   measurementDistance,
   currentMoleculeName,
   moleculeStats,
+  hasFirstAtom,
   loadMolecule,
   setStyle,
   setColorScheme,

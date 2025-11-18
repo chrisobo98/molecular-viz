@@ -6,7 +6,26 @@
 -->
 
 <template>
-  <div v-if="distance !== null" class="measurement-card">
+  <!-- Instruction card when measure mode is active but no atoms selected yet -->
+  <div v-if="measureMode && !hasFirstAtom && distance === null" class="measurement-card measurement-card--instruction">
+    <h4>
+      <Icon name="mdi:ruler" />
+      Measure Mode
+    </h4>
+    <p class="instruction-text">Click on first atom</p>
+  </div>
+
+  <!-- Instruction card when first atom is selected -->
+  <div v-else-if="measureMode && hasFirstAtom && distance === null" class="measurement-card measurement-card--instruction">
+    <h4>
+      <Icon name="mdi:ruler" />
+      Measure Mode
+    </h4>
+    <p class="instruction-text">Click on second atom</p>
+  </div>
+
+  <!-- Result card when measurement is complete -->
+  <div v-else-if="distance !== null" class="measurement-card">
     <h4>
       <Icon name="mdi:ruler" />
       Distance Measurement
@@ -19,6 +38,8 @@
 <script setup lang="ts">
 interface Props {
   distance: number | null
+  measureMode: boolean
+  hasFirstAtom: boolean
 }
 
 defineProps<Props>()
@@ -69,5 +90,16 @@ defineEmits<{
 
 .clear-button:hover {
   background: #d0d0d0;
+}
+
+.measurement-card--instruction {
+  border: 2px solid #667eea;
+}
+
+.instruction-text {
+  font-size: 0.9rem;
+  color: #667eea;
+  margin: 0;
+  font-weight: 500;
 }
 </style>
