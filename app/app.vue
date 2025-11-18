@@ -16,7 +16,7 @@
 <template>
   <div class="app-container">
     <!-- Help Modal -->
-    <HelpModal v-model="showHelpModal" />
+    <MoleculesHelpModal v-model="showHelpModal" />
 
     <!-- Header -->
     <header class="app-header">
@@ -34,7 +34,7 @@
       <div class="viewer-section">
         <div class="viewer-wrapper">
           <!-- Loading Overlay -->
-          <LoadingOverlay
+          <MoleculesLoadingOverlay
             :loading="isLoading"
             :molecule-name="currentMoleculeName"
           />
@@ -52,10 +52,10 @@
           <div id="viewer-container" ref="viewerContainer" />
 
           <!-- Atom Info -->
-          <AtomInfoCard :atom="selectedAtom" />
+          <MoleculesAtomInfoCard :atom="selectedAtom" />
 
           <!-- Distance Measurement -->
-          <MeasurementCard
+          <MoleculesMeasurementCard
             :distance="measurementDistance"
             @clear="clearMeasurement"
           />
@@ -63,7 +63,7 @@
       </div>
 
       <!-- Control Panel -->
-      <ControlPanel
+      <MoleculesControlPanel
         :stats="moleculeStats"
         :current-molecule="currentMolecule"
         :current-style="currentStyle"

@@ -8,82 +8,82 @@
 <template>
   <div class="controls-section">
     <!-- Stats Panel -->
-    <StatsCard :stats="stats" />
+    <MoleculesStatsCard :stats="stats" />
 
     <!-- Molecule Selector -->
-    <ControlCard title="Select Molecule" icon="mdi:flask">
-      <ButtonGroup
+    <UiControlCard title="Select Molecule" icon="mdi:flask">
+      <UiButtonGroup
         :options="moleculeOptions"
         :model-value="currentMolecule"
         @update:model-value="$emit('update:molecule', $event)"
       />
-    </ControlCard>
+    </UiControlCard>
 
     <!-- Visualization Style -->
-    <ControlCard title="Visualization Style" icon="mdi:eye">
-      <ButtonGroup
+    <UiControlCard title="Visualization Style" icon="mdi:eye">
+      <UiButtonGroup
         :options="styleOptions"
         :model-value="currentStyle"
         @update:model-value="$emit('update:style', $event)"
       />
-    </ControlCard>
+    </UiControlCard>
 
     <!-- Color Scheme -->
-    <ControlCard title="Color Scheme" icon="mdi:palette">
-      <ButtonGroup
+    <UiControlCard title="Color Scheme" icon="mdi:palette">
+      <UiButtonGroup
         :options="colorOptions"
         :model-value="currentColorScheme"
         @update:model-value="$emit('update:colorScheme', $event)"
       />
-    </ControlCard>
+    </UiControlCard>
 
     <!-- Background -->
-    <ControlCard title="Background" icon="mdi:image">
-      <ButtonGroup
+    <UiControlCard title="Background" icon="mdi:image">
+      <UiButtonGroup
         :options="backgroundOptions"
         :model-value="currentBackground"
         @update:model-value="$emit('update:background', $event)"
       />
-    </ControlCard>
+    </UiControlCard>
 
     <!-- Tools -->
-    <ControlCard title="Tools" icon="mdi:tools">
+    <UiControlCard title="Tools" icon="mdi:tools">
       <div class="button-group">
-        <ActionButton
+        <UiActionButton
           icon="mdi:rotate-3d"
           :active="isSpinning"
           @click="$emit('toggleSpin')"
         >
           {{ isSpinning ? 'Stop Spin' : 'Auto-Rotate' }}
-        </ActionButton>
+        </UiActionButton>
 
-        <ActionButton
+        <UiActionButton
           icon="mdi:ruler"
           :active="measureMode"
           @click="$emit('toggleMeasure')"
         >
           {{ measureMode ? 'Measuring...' : 'Measure' }}
-        </ActionButton>
+        </UiActionButton>
 
-        <ActionButton
+        <UiActionButton
           icon="mdi:label"
           :active="showLabels"
           @click="$emit('toggleLabels')"
         >
           {{ showLabels ? 'Hide Labels' : 'Show Labels' }}
-        </ActionButton>
+        </UiActionButton>
       </div>
 
       <div class="button-group" style="margin-top: 0.5rem;">
-        <ActionButton icon="mdi:restore" @click="$emit('resetView')">
+        <UiActionButton icon="mdi:restore" @click="$emit('resetView')">
           Reset View
-        </ActionButton>
+        </UiActionButton>
 
-        <ActionButton icon="mdi:camera" @click="$emit('screenshot')">
+        <UiActionButton icon="mdi:camera" @click="$emit('screenshot')">
           Screenshot
-        </ActionButton>
+        </UiActionButton>
       </div>
-    </ControlCard>
+    </UiControlCard>
   </div>
 </template>
 

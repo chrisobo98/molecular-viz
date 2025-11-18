@@ -6,7 +6,7 @@
 -->
 
 <template>
-  <ControlCard title="Molecule Stats" icon="mdi:chart-bar" gradient>
+  <UiControlCard title="Molecule Stats" icon="mdi:chart-bar" gradient>
     <div class="stats-grid">
       <div class="stat-item">
         <span class="stat-label">Formula</span>
@@ -21,7 +21,7 @@
         <span class="stat-value">{{ stats.weight }} g/mol</span>
       </div>
     </div>
-  </ControlCard>
+  </UiControlCard>
 </template>
 
 <script setup lang="ts">

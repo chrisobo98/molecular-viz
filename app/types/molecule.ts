@@ -113,6 +113,7 @@ export interface Viewer {
   removeAllShapes: () => void
   pngURI: () => string
   clear: () => void
+  selectedAtoms: (sel: object) => AtomInfo[]
 }
 
 /**

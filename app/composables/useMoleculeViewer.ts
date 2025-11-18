@@ -379,17 +379,25 @@ export function useMoleculeViewer() {
   }
 
   /**
-   * Add labels to viewer
+   * Add labels to viewer showing element symbols on each atom
    */
   const addLabels = () => {
     if (!viewer) return
 
-    viewer.addLabel('Labels enabled', {
-      position: { x: 0, y: 0, z: 0 },
-      backgroundColor: 'rgba(0,0,0,0.5)',
-      fontColor: 'white',
-      fontSize: 12
+    // Get all atoms in the current model
+    const atoms = viewer.selectedAtoms({})
+
+    // Add a label for each atom showing its element symbol
+    atoms.forEach((atom: AtomInfo) => {
+      viewer!.addLabel(atom.elem, {
+        position: { x: atom.x, y: atom.y, z: atom.z },
+        backgroundColor: 'rgba(0,0,0,0.6)',
+        fontColor: 'white',
+        fontSize: 10,
+        backgroundOpacity: 0.7
+      })
     })
+
     viewer.render()
   }
 
