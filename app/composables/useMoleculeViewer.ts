@@ -380,6 +380,10 @@ export function useMoleculeViewer() {
 
   /**
    * Add labels to viewer showing element symbols on each atom
+   *
+   * Performance optimization:
+   * - Skip hydrogen atoms (most numerous, least informative)
+   * - Limit total labels to prevent browser freeze on large molecules
    */
   const addLabels = () => {
     if (!viewer) return
@@ -387,8 +391,18 @@ export function useMoleculeViewer() {
     // Get all atoms in the current model
     const atoms = viewer.selectedAtoms({})
 
-    // Add a label for each atom showing its element symbol
-    atoms.forEach((atom: AtomInfo) => {
+    // Filter out hydrogens and limit to max 50 labels for performance
+    const heavyAtoms = atoms
+      .filter((atom: AtomInfo) => atom.elem !== 'H')
+      .slice(0, 50)
+
+    // Warn if molecule is too large
+    if (atoms.length > 100) {
+      console.warn(`Large molecule (${atoms.length} atoms) - showing only ${heavyAtoms.length} labels`)
+    }
+
+    // Add a label for each heavy atom showing its element symbol
+    heavyAtoms.forEach((atom: AtomInfo) => {
       viewer!.addLabel(atom.elem, {
         position: { x: atom.x, y: atom.y, z: atom.z },
         backgroundColor: 'rgba(0,0,0,0.6)',
