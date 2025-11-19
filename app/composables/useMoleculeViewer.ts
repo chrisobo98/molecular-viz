@@ -237,6 +237,7 @@ export function useMoleculeViewer() {
     isLoading.value = true
     searchError.value = null
     customPdbId.value = cleanId
+    currentMolecule.value = '' // Clear preset selection when loading custom PDB
 
     // Clear previous state
     viewer.clear()
@@ -521,7 +522,11 @@ export function useMoleculeViewer() {
     const imgData = viewer.pngURI()
     const link = document.createElement('a')
     link.href = imgData
-    link.download = `${currentMolecule.value}-molecule.png`
+    // Use custom PDB ID if loaded, otherwise use preset molecule ID
+    const filename = customPdbId.value
+      ? `${customPdbId.value.toLowerCase()}-molecule.png`
+      : `${currentMolecule.value}-molecule.png`
+    link.download = filename
     document.body.appendChild(link)
     link.click()
     document.body.removeChild(link)
