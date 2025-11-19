@@ -72,10 +72,11 @@ const elementFullName = computed(() => {
   position: absolute;
   bottom: 1rem;
   left: 1rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(30, 41, 59, 0.9);
+  backdrop-filter: blur(12px);
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(71, 85, 105, 0.5);
   min-width: 200px;
   z-index: 50;
 }
@@ -83,7 +84,7 @@ const elementFullName = computed(() => {
 .atom-info-card h4 {
   margin: 0 0 0.75rem;
   font-size: 0.9rem;
-  color: #667eea;
+  color: #3b82f6;
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -92,6 +93,10 @@ const elementFullName = computed(() => {
 .atom-details p {
   margin: 0.3rem 0;
   font-size: 0.85rem;
-  color: #333;
+  color: #e2e8f0;
+}
+
+.atom-details strong {
+  color: #94a3b8;
 }
 </style>

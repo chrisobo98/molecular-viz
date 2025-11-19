@@ -53,10 +53,11 @@ defineEmits<{
   position: absolute;
   bottom: 1rem;
   right: 1rem;
-  background: rgba(255, 255, 255, 0.95);
+  background: rgba(30, 41, 59, 0.9);
+  backdrop-filter: blur(12px);
   padding: 1rem;
   border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(71, 85, 105, 0.5);
   text-align: center;
   z-index: 50;
 }
@@ -64,7 +65,7 @@ defineEmits<{
 .measurement-card h4 {
   margin: 0 0 0.5rem;
   font-size: 0.9rem;
-  color: #667eea;
+  color: #3b82f6;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -74,31 +75,33 @@ defineEmits<{
 .distance-value {
   font-size: 1.5rem;
   font-weight: 700;
-  color: #333;
+  color: #e2e8f0;
   margin: 0.5rem 0;
 }
 
 .clear-button {
   padding: 0.3rem 0.75rem;
-  background: #e0e0e0;
-  border: none;
+  background: rgba(51, 65, 85, 0.8);
+  border: 1px solid rgba(71, 85, 105, 0.5);
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.8rem;
-  transition: background 0.2s ease;
+  color: #e2e8f0;
+  transition: all 0.2s ease;
 }
 
 .clear-button:hover {
-  background: #d0d0d0;
+  background: rgba(59, 130, 246, 0.8);
+  border-color: #3b82f6;
 }
 
 .measurement-card--instruction {
-  border: 2px solid #667eea;
+  border: 2px solid #3b82f6;
 }
 
 .instruction-text {
   font-size: 0.9rem;
-  color: #667eea;
+  color: #3b82f6;
   margin: 0;
   font-weight: 500;
 }

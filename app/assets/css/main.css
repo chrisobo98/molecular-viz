@@ -1,0 +1,23 @@
+/**
+ * Global Styles
+ * Base resets and global styling
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  overflow-x: hidden;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #0f172a;
+  overflow-x: hidden;
+  width: 100%;
+  max-width: 100vw;
+}

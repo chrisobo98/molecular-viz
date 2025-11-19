@@ -11,7 +11,7 @@
     <MoleculesStatsCard :stats="stats" />
 
     <!-- Molecule Selector -->
-    <UiControlCard title="Select Molecule" icon="mdi:flask">
+    <UiControlCard title="Select Molecule" icon="mdi:flask" collapsible :default-open="true">
       <UiButtonGroup
         :options="moleculeOptions"
         :model-value="currentMolecule"
@@ -20,7 +20,7 @@
     </UiControlCard>
 
     <!-- Visualization Style -->
-    <UiControlCard title="Visualization Style" icon="mdi:eye">
+    <UiControlCard title="Visualization Style" icon="mdi:eye" collapsible :default-open="false">
       <UiButtonGroup
         :options="styleOptions"
         :model-value="currentStyle"
@@ -29,7 +29,7 @@
     </UiControlCard>
 
     <!-- Color Scheme -->
-    <UiControlCard title="Color Scheme" icon="mdi:palette">
+    <UiControlCard title="Color Scheme" icon="mdi:palette" collapsible :default-open="false">
       <UiButtonGroup
         :options="colorOptions"
         :model-value="currentColorScheme"
@@ -38,58 +38,12 @@
     </UiControlCard>
 
     <!-- Background -->
-    <UiControlCard title="Background" icon="mdi:image">
+    <UiControlCard title="Background" icon="mdi:image" collapsible :default-open="false">
       <UiButtonGroup
         :options="backgroundOptions"
         :model-value="currentBackground"
         @update:model-value="$emit('update:background', $event)"
       />
-    </UiControlCard>
-
-    <!-- Tools -->
-    <UiControlCard title="Tools" icon="mdi:tools">
-      <div class="button-group">
-        <UiActionButton
-          icon="mdi:rotate-3d"
-          :active="isSpinning"
-          @click="$emit('toggleSpin')"
-        >
-          {{ isSpinning ? 'Stop Spin' : 'Auto-Rotate' }}
-        </UiActionButton>
-
-        <UiActionButton
-          icon="mdi:ruler"
-          :active="measureMode"
-          @click="$emit('toggleMeasure')"
-        >
-          {{ measureMode ? 'Measuring...' : 'Measure' }}
-        </UiActionButton>
-
-        <UiActionButton
-          icon="mdi:label"
-          :active="showLabels"
-          @click="$emit('toggleLabels')"
-        >
-          {{ showLabels ? 'Hide Labels' : 'Show Labels' }}
-        </UiActionButton>
-      </div>
-
-      <div class="button-group" style="margin-top: 0.5rem;">
-        <UiActionButton icon="mdi:restore" @click="$emit('resetView')">
-          Reset View
-        </UiActionButton>
-
-        <UiActionButton icon="mdi:camera" @click="$emit('screenshot')">
-          Screenshot
-        </UiActionButton>
-
-        <UiActionButton
-          icon="mdi:compare"
-          @click="$emit('toggle-comparison')"
-        >
-          Compare
-        </UiActionButton>
-      </div>
     </UiControlCard>
   </div>
 </template>
@@ -109,10 +63,6 @@ interface Props {
   currentStyle: string
   currentColorScheme: string
   currentBackground: string
-  isSpinning: boolean
-  measureMode: boolean
-  showLabels: boolean
-  comparisonMode: boolean
 }
 
 defineProps<Props>()
@@ -122,12 +72,6 @@ defineEmits<{
   'update:style': [value: string]
   'update:colorScheme': [value: string]
   'update:background': [value: string]
-  'toggleSpin': []
-  'toggleMeasure': []
-  'toggleLabels': []
-  'resetView': []
-  'screenshot': []
-  'toggle-comparison': []
 }>()
 
 // Transform data for ButtonGroup component

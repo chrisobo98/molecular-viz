@@ -50,8 +50,9 @@ defineEmits<{
   flex: 1;
   min-width: calc(50% - 0.25rem);
   padding: 0.6rem 0.75rem;
-  border: 2px solid #e0e0e0;
-  background: white;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  background: rgba(51, 65, 85, 0.5);
+  color: #e2e8f0;
   border-radius: 8px;
   font-size: 0.85rem;
   cursor: pointer;
@@ -63,13 +64,14 @@ defineEmits<{
 }
 
 .button-group__button:hover {
-  border-color: #667eea;
-  color: #667eea;
+  border-color: #3b82f6;
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
 }
 
 .button-group__button--active {
-  background: #667eea;
-  border-color: #667eea;
+  background: #3b82f6;
+  border-color: #3b82f6;
   color: white;
 }
 
