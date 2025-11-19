@@ -246,18 +246,17 @@ export function useMoleculeViewer() {
     clearMeasurement()
 
     return new Promise((resolve) => {
-      window.$3Dmol.download(`pdb:${cleanId}`, viewer, {}, (model: unknown) => {
-        if (!model) {
-          searchError.value = `PDB ID "${cleanId}" not found`
-          customPdbId.value = null
-          isLoading.value = false
-          resolve(false)
-          return
-        }
-
-        // Count atoms from the loaded model
+      window.$3Dmol.download(`pdb:${cleanId}`, viewer!, {}, () => {
+        // Check if model was loaded by checking atoms
         if (viewer) {
           const atoms = viewer.selectedAtoms({})
+          if (atoms.length === 0) {
+            searchError.value = `PDB ID "${cleanId}" not found`
+            customPdbId.value = null
+            isLoading.value = false
+            resolve(false)
+            return
+          }
           atomCount.value = atoms.length
         }
 

@@ -40,9 +40,30 @@
 
     <!-- Controls (only shown if showControls is true) -->
     <div v-if="showControls" class="viewer-controls">
+      <!-- PDB Search -->
+      <div class="control-row pdb-search">
+        <input
+          v-model="pdbInput"
+          type="text"
+          placeholder="PDB ID (e.g., 1CRN)"
+          maxlength="4"
+          class="pdb-input"
+          @keyup.enter="handlePdbSearch"
+        >
+        <button class="search-btn" :disabled="isLoading" @click="handlePdbSearch">
+          <Icon v-if="isLoading" name="mdi:loading" class="spinning" />
+          <Icon v-else name="mdi:magnify" />
+        </button>
+      </div>
+
+      <!-- Search Error -->
+      <div v-if="searchError" class="search-error">
+        {{ searchError }}
+      </div>
+
       <!-- Molecule Selector -->
       <div class="control-row">
-        <label>Molecule:</label>
+        <label>Preset:</label>
         <select v-model="selectedMoleculeId" @change="onMoleculeChange">
           <option v-for="mol in molecules" :key="mol.id" :value="mol.id">
             {{ mol.name }}
@@ -146,11 +167,19 @@ const selectedAtom = ref<AtomInfo | null>(null)
 const measureAtom1 = ref<AtomInfo | null>(null)
 const measurementDistance = ref<number | null>(null)
 
+// PDB search
+const pdbInput = ref('')
+const searchError = ref<string | null>(null)
+const customPdbId = ref<string | null>(null)
+
 // =============================================================================
 // COMPUTED
 // =============================================================================
 
 const currentMoleculeName = computed(() => {
+  if (customPdbId.value) {
+    return `PDB: ${customPdbId.value.toUpperCase()}`
+  }
   const mol = getMoleculeById(selectedMoleculeId.value)
   return mol?.name || 'molecule'
 })
@@ -218,6 +247,8 @@ const loadMolecule = (moleculeId: string) => {
 
   isLoading.value = true
   selectedMoleculeId.value = moleculeId
+  customPdbId.value = null // Clear custom PDB when loading preset
+  searchError.value = null
 
   // Clear previous state
   viewer.clear()
@@ -231,6 +262,58 @@ const loadMolecule = (moleculeId: string) => {
   } else {
     loadFromPDB(molecule.pdbId)
   }
+}
+
+/**
+ * Search and load from PDB database
+ */
+const handlePdbSearch = () => {
+  if (!viewer || !pdbInput.value.trim()) {
+    searchError.value = 'Please enter a PDB ID'
+    return
+  }
+
+  const cleanId = pdbInput.value.trim().toUpperCase()
+
+  // Validate PDB ID format
+  if (!/^[A-Z0-9]{4}$/i.test(cleanId)) {
+    searchError.value = 'PDB ID must be 4 characters'
+    return
+  }
+
+  isLoading.value = true
+  searchError.value = null
+  customPdbId.value = cleanId
+
+  // Clear previous state
+  viewer.clear()
+  viewer.removeAllLabels()
+  viewer.removeAllShapes()
+  selectedAtom.value = null
+  clearMeasurement()
+
+  window.$3Dmol.download(`pdb:${cleanId}`, viewer, {}, () => {
+    // Check if model was loaded by checking atoms
+    const atoms = viewer?.selectedAtoms({})
+    if (!atoms || atoms.length === 0) {
+      searchError.value = `PDB ID "${cleanId}" not found`
+      customPdbId.value = null
+      isLoading.value = false
+      return
+    }
+
+    applyStyle()
+    setupAtomClicking()
+
+    if (viewer) {
+      viewer.zoomTo()
+      viewer.zoom(VIEWER_CONFIG.zoomFactor, VIEWER_CONFIG.animationDuration)
+      viewer.render()
+    }
+
+    emit('molecule-loaded', cleanId)
+    isLoading.value = false
+  })
 }
 
 /**
@@ -433,7 +516,7 @@ watch(() => props.initialMolecule, (newMolecule) => {
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;
-  background: rgba(102, 126, 234, 0.9);
+  background: rgba(59, 130, 246, 0.9);
   color: white;
   padding: 0.25rem 0.75rem;
   border-radius: 4px;
@@ -444,8 +527,8 @@ watch(() => props.initialMolecule, (newMolecule) => {
 
 .viewer-controls {
   padding: 0.75rem;
-  background: rgba(255, 255, 255, 0.95);
-  border-top: 1px solid #e0e0e0;
+  background: rgba(30, 41, 59, 0.8);
+  border-top: 1px solid rgba(71, 85, 105, 0.5);
 }
 
 .control-row {
@@ -462,17 +545,90 @@ watch(() => props.initialMolecule, (newMolecule) => {
 .control-row label {
   font-size: 0.75rem;
   font-weight: 600;
-  color: #666;
-  min-width: 60px;
+  color: #94a3b8;
+  min-width: 50px;
 }
 
 .control-row select {
   flex: 1;
   padding: 0.3rem 0.5rem;
-  border: 1px solid #ddd;
+  border: 1px solid rgba(71, 85, 105, 0.5);
   border-radius: 4px;
   font-size: 0.8rem;
-  background: white;
+  background: rgba(51, 65, 85, 0.5);
+  color: #e2e8f0;
+}
+
+.control-row select:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+/* PDB Search Styles */
+.control-row.pdb-search {
+  gap: 0.4rem;
+}
+
+.pdb-input {
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgba(71, 85, 105, 0.5);
+  background: rgba(51, 65, 85, 0.5);
+  color: #e2e8f0;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+.pdb-input::placeholder {
+  color: #64748b;
+  text-transform: none;
+}
+
+.pdb-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+.search-btn {
+  padding: 0.35rem 0.5rem;
+  border: 1px solid #3b82f6;
+  background: #3b82f6;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.search-btn:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.search-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinning {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.search-error {
+  padding: 0.3rem 0.5rem;
+  background: rgba(239, 68, 68, 0.2);
+  border: 1px solid rgba(239, 68, 68, 0.5);
+  border-radius: 4px;
+  color: #fca5a5;
+  font-size: 0.7rem;
+  margin-bottom: 0.5rem;
 }
 
 .control-row.actions {
@@ -482,9 +638,9 @@ watch(() => props.initialMolecule, (newMolecule) => {
 
 .control-row.actions button {
   padding: 0.3rem 0.75rem;
-  border: 1px solid #667eea;
-  background: white;
-  color: #667eea;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(51, 65, 85, 0.5);
+  color: #e2e8f0;
   border-radius: 4px;
   font-size: 0.75rem;
   cursor: pointer;
@@ -492,12 +648,14 @@ watch(() => props.initialMolecule, (newMolecule) => {
 }
 
 .control-row.actions button:hover {
-  background: #667eea;
+  background: rgba(59, 130, 246, 0.8);
+  border-color: #3b82f6;
   color: white;
 }
 
 .control-row.actions button.active {
-  background: #667eea;
+  background: #3b82f6;
+  border-color: #3b82f6;
   color: white;
 }
 </style>

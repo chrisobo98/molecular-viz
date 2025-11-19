@@ -117,9 +117,10 @@ const onRightMoleculeLoaded = (moleculeId: string) => {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: white;
+  background: rgba(30, 41, 59, 0.5);
+  backdrop-filter: blur(12px);
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(71, 85, 105, 0.5);
   overflow: hidden;
 }
 
@@ -128,7 +129,8 @@ const onRightMoleculeLoaded = (moleculeId: string) => {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: rgba(15, 23, 42, 0.8);
+  border-bottom: 1px solid rgba(71, 85, 105, 0.5);
   color: white;
 }
 
@@ -138,6 +140,7 @@ const onRightMoleculeLoaded = (moleculeId: string) => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  color: #e2e8f0;
 }
 
 .comparison-actions {
@@ -151,24 +154,33 @@ const onRightMoleculeLoaded = (moleculeId: string) => {
   align-items: center;
   gap: 0.3rem;
   padding: 0.4rem 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
-  border-radius: 4px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  background: rgba(51, 65, 85, 0.5);
+  color: #e2e8f0;
+  border-radius: 6px;
   font-size: 0.8rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.swap-button:hover,
+.swap-button:hover {
+  background: rgba(59, 130, 246, 0.8);
+  border-color: #3b82f6;
+  color: white;
+}
+
 .exit-button:hover {
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(239, 68, 68, 0.8);
+  border-color: #ef4444;
+  color: white;
 }
 
 .comparison-viewers {
   flex: 1;
   display: flex;
   min-height: 0;
+  padding: 1rem;
+  gap: 1rem;
 }
 
 .viewer-panel {
@@ -180,13 +192,15 @@ const onRightMoleculeLoaded = (moleculeId: string) => {
 
 .divider {
   width: 2px;
-  background: #e0e0e0;
+  background: rgba(71, 85, 105, 0.5);
+  border-radius: 1px;
 }
 
 /* Responsive: Stack vertically on smaller screens */
 @media (max-width: 900px) {
   .comparison-viewers {
     flex-direction: column;
+    padding: 0.75rem;
   }
 
   .divider {
