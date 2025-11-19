@@ -30,60 +30,72 @@
 
     <!-- Main Content -->
     <main class="main-content">
-      <!-- Viewer Section -->
-      <div class="viewer-section">
-        <div class="viewer-wrapper">
-          <!-- Loading Overlay -->
-          <MoleculesLoadingOverlay
-            :loading="isLoading"
-            :molecule-name="currentMoleculeName"
-          />
-
-          <!-- Help Button -->
-          <button
-            class="help-button"
-            title="Help & Shortcuts"
-            @click="showHelpModal = true"
-          >
-            <Icon name="mdi:help-circle-outline" />
-          </button>
-
-          <!-- 3Dmol Viewer Container -->
-          <div id="viewer-container" ref="viewerContainer" />
-
-          <!-- Atom Info -->
-          <MoleculesAtomInfoCard :atom="selectedAtom" />
-
-          <!-- Distance Measurement -->
-          <MoleculesMeasurementCard
-            :distance="measurementDistance"
-            :measure-mode="measureMode"
-            :has-first-atom="hasFirstAtom"
-            @clear="clearMeasurement"
-          />
+      <!-- Comparison Mode -->
+      <template v-if="comparisonMode">
+        <div class="comparison-section">
+          <MoleculesComparisonMode @exit="comparisonMode = false" />
         </div>
-      </div>
+      </template>
 
-      <!-- Control Panel -->
-      <MoleculesControlPanel
-        :stats="moleculeStats"
-        :current-molecule="currentMolecule"
-        :current-style="currentStyle"
-        :current-color-scheme="currentColorScheme"
-        :current-background="currentBackground"
-        :is-spinning="isSpinning"
-        :measure-mode="measureMode"
-        :show-labels="showLabels"
-        @update:molecule="loadMolecule"
-        @update:style="setStyle"
-        @update:color-scheme="setColorScheme"
-        @update:background="setBackground"
-        @toggle-spin="toggleSpin"
-        @toggle-measure="toggleMeasureMode"
-        @toggle-labels="toggleLabels"
-        @reset-view="resetView"
-        @screenshot="takeScreenshot"
-      />
+      <!-- Single Viewer Mode -->
+      <template v-else>
+        <!-- Viewer Section -->
+        <div class="viewer-section">
+          <div class="viewer-wrapper">
+            <!-- Loading Overlay -->
+            <MoleculesLoadingOverlay
+              :loading="isLoading"
+              :molecule-name="currentMoleculeName"
+            />
+
+            <!-- Help Button -->
+            <button
+              class="help-button"
+              title="Help & Shortcuts"
+              @click="showHelpModal = true"
+            >
+              <Icon name="mdi:help-circle-outline" />
+            </button>
+
+            <!-- 3Dmol Viewer Container -->
+            <div id="viewer-container" ref="viewerContainer" />
+
+            <!-- Atom Info -->
+            <MoleculesAtomInfoCard :atom="selectedAtom" />
+
+            <!-- Distance Measurement -->
+            <MoleculesMeasurementCard
+              :distance="measurementDistance"
+              :measure-mode="measureMode"
+              :has-first-atom="hasFirstAtom"
+              @clear="clearMeasurement"
+            />
+          </div>
+        </div>
+
+        <!-- Control Panel -->
+        <MoleculesControlPanel
+          :stats="moleculeStats"
+          :current-molecule="currentMolecule"
+          :current-style="currentStyle"
+          :current-color-scheme="currentColorScheme"
+          :current-background="currentBackground"
+          :is-spinning="isSpinning"
+          :measure-mode="measureMode"
+          :show-labels="showLabels"
+          :comparison-mode="comparisonMode"
+          @update:molecule="loadMolecule"
+          @update:style="setStyle"
+          @update:color-scheme="setColorScheme"
+          @update:background="setBackground"
+          @toggle-spin="toggleSpin"
+          @toggle-measure="toggleMeasureMode"
+          @toggle-labels="toggleLabels"
+          @reset-view="resetView"
+          @screenshot="takeScreenshot"
+          @toggle-comparison="comparisonMode = true"
+        />
+      </template>
     </main>
 
     <!-- Footer -->
@@ -110,7 +122,7 @@
  * Follows Vue 3 Composition API best practices.
  */
 
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useMoleculeViewer } from '~/composables/useMoleculeViewer'
 import { useKeyboardShortcuts } from '~/composables/useKeyboardShortcuts'
 
@@ -140,6 +152,7 @@ const {
   currentMoleculeName,
   moleculeStats,
   hasFirstAtom,
+  initViewer,
   loadMolecule,
   setStyle,
   setColorScheme,
@@ -154,6 +167,9 @@ const {
 
 // Help modal state
 const showHelpModal = ref(false)
+
+// Comparison mode state
+const comparisonMode = ref(false)
 
 // Molecule IDs for keyboard shortcuts
 const moleculeIds = ['caffeine', 'aspirin', 'glucose', 'ethanol'] as const
@@ -170,6 +186,16 @@ useKeyboardShortcuts({
   onToggleMeasure: toggleMeasureMode,
   onToggleLabels: toggleLabels,
   onToggleHelp: () => { showHelpModal.value = !showHelpModal.value }
+})
+
+// Reinitialize viewer when exiting comparison mode
+watch(comparisonMode, (newValue, oldValue) => {
+  if (oldValue === true && newValue === false) {
+    // Wait for DOM to update with the viewer container
+    nextTick(() => {
+      initViewer()
+    })
+  }
 })
 </script>
 
@@ -238,6 +264,12 @@ useKeyboardShortcuts({
   max-width: 1400px;
   margin: 0 auto;
   width: 100%;
+}
+
+/* Comparison Section */
+.comparison-section {
+  grid-column: 1 / -1;
+  height: 600px;
 }
 
 /* Viewer Section */
@@ -317,6 +349,10 @@ useKeyboardShortcuts({
 
   .viewer-wrapper {
     height: 400px;
+  }
+
+  .comparison-section {
+    height: 500px;
   }
 }
 

@@ -477,6 +477,7 @@ export function useMoleculeViewer() {
     hasFirstAtom,
 
     // Methods
+    initViewer: waitForLibraryAndInit,
     loadMolecule,
     setStyle,
     setColorScheme,

@@ -82,6 +82,13 @@
         <UiActionButton icon="mdi:camera" @click="$emit('screenshot')">
           Screenshot
         </UiActionButton>
+
+        <UiActionButton
+          icon="mdi:compare"
+          @click="$emit('toggle-comparison')"
+        >
+          Compare
+        </UiActionButton>
       </div>
     </UiControlCard>
   </div>
@@ -105,6 +112,7 @@ interface Props {
   isSpinning: boolean
   measureMode: boolean
   showLabels: boolean
+  comparisonMode: boolean
 }
 
 defineProps<Props>()
@@ -119,6 +127,7 @@ defineEmits<{
   'toggleLabels': []
   'resetView': []
   'screenshot': []
+  'toggle-comparison': []
 }>()
 
 // Transform data for ButtonGroup component
