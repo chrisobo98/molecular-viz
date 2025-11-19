@@ -10,6 +10,14 @@
     <!-- Stats Panel -->
     <MoleculesStatsCard :stats="stats" />
 
+    <!-- PDB Search -->
+    <MoleculesPdbSearch
+      :is-loading="isSearching"
+      :error="searchError"
+      @search="$emit('search-pdb', $event)"
+      @clear-error="$emit('clear-search-error')"
+    />
+
     <!-- Molecule Selector -->
     <UiControlCard title="Select Molecule" icon="mdi:flask" collapsible :default-open="true">
       <UiButtonGroup
@@ -63,6 +71,8 @@ interface Props {
   currentStyle: string
   currentColorScheme: string
   currentBackground: string
+  isSearching: boolean
+  searchError: string | null
 }
 
 defineProps<Props>()
@@ -72,6 +82,8 @@ defineEmits<{
   'update:style': [value: string]
   'update:colorScheme': [value: string]
   'update:background': [value: string]
+  'search-pdb': [pdbId: string]
+  'clear-search-error': []
 }>()
 
 // Transform data for ButtonGroup component

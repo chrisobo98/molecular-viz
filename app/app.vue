@@ -124,10 +124,14 @@
           :current-style="currentStyle"
           :current-color-scheme="currentColorScheme"
           :current-background="currentBackground"
+          :is-searching="isLoading"
+          :search-error="searchError"
           @update:molecule="loadMolecule"
           @update:style="setStyle"
           @update:color-scheme="setColorScheme"
           @update:background="setBackground"
+          @search-pdb="searchPDB"
+          @clear-search-error="clearSearchError"
         />
       </template>
     </main>
@@ -183,11 +187,14 @@ const {
   measureMode,
   selectedAtom,
   measurementDistance,
+  searchError,
   currentMoleculeName,
   moleculeStats,
   hasFirstAtom,
   initViewer,
   loadMolecule,
+  searchPDB,
+  clearSearchError,
   setStyle,
   setColorScheme,
   setBackground,

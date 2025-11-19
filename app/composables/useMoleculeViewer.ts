@@ -81,16 +81,30 @@ export function useMoleculeViewer() {
   // Stats
   const atomCount = ref(0)
 
+  // PDB Search state
+  const searchError = ref<string | null>(null)
+  const customPdbId = ref<string | null>(null)
+
   // ==========================================================================
   // COMPUTED PROPERTIES
   // ==========================================================================
 
   const currentMoleculeName = computed(() => {
+    if (customPdbId.value) {
+      return `PDB: ${customPdbId.value.toUpperCase()}`
+    }
     const mol = getMoleculeById(currentMolecule.value)
     return mol?.name || 'molecule'
   })
 
   const moleculeStats = computed<MoleculeStats>(() => {
+    if (customPdbId.value) {
+      return {
+        formula: 'Custom PDB',
+        atomCount: atomCount.value,
+        weight: '-'
+      }
+    }
     const mol = getMoleculeById(currentMolecule.value)
     return {
       formula: mol?.formula || '-',
@@ -157,6 +171,8 @@ export function useMoleculeViewer() {
 
     isLoading.value = true
     currentMolecule.value = moleculeId
+    customPdbId.value = null // Clear custom PDB when loading preset
+    searchError.value = null
 
     // Clear previous state
     viewer.clear()
@@ -198,6 +214,77 @@ export function useMoleculeViewer() {
       finalizeLoad(pdbId)
       isLoading.value = false
     })
+  }
+
+  /**
+   * Search and load molecule from PDB database by ID
+   * Handles errors for invalid/not found PDB IDs
+   */
+  const searchPDB = async (pdbId: string): Promise<boolean> => {
+    if (!viewer || !pdbId.trim()) {
+      searchError.value = 'Please enter a PDB ID'
+      return false
+    }
+
+    const cleanId = pdbId.trim().toUpperCase()
+
+    // Validate PDB ID format (typically 4 characters)
+    if (!/^[A-Z0-9]{4}$/i.test(cleanId)) {
+      searchError.value = 'PDB ID must be 4 characters (e.g., 1CRN, 4HHB)'
+      return false
+    }
+
+    isLoading.value = true
+    searchError.value = null
+    customPdbId.value = cleanId
+
+    // Clear previous state
+    viewer.clear()
+    viewer.removeAllLabels()
+    viewer.removeAllShapes()
+    selectedAtom.value = null
+    clearMeasurement()
+
+    return new Promise((resolve) => {
+      window.$3Dmol.download(`pdb:${cleanId}`, viewer, {}, (model: unknown) => {
+        if (!model) {
+          searchError.value = `PDB ID "${cleanId}" not found`
+          customPdbId.value = null
+          isLoading.value = false
+          resolve(false)
+          return
+        }
+
+        // Count atoms from the loaded model
+        if (viewer) {
+          const atoms = viewer.selectedAtoms({})
+          atomCount.value = atoms.length
+        }
+
+        applyVisualizationSettings()
+        setupAtomClicking()
+
+        if (viewer) {
+          viewer.zoomTo()
+          viewer.zoom(VIEWER_CONFIG.zoomFactor, VIEWER_CONFIG.animationDuration)
+          viewer.render()
+        }
+
+        if (showLabels.value) {
+          addLabels()
+        }
+
+        isLoading.value = false
+        resolve(true)
+      })
+    })
+  }
+
+  /**
+   * Clear search error
+   */
+  const clearSearchError = () => {
+    searchError.value = null
   }
 
   /**
@@ -470,6 +557,7 @@ export function useMoleculeViewer() {
     measureMode,
     selectedAtom,
     measurementDistance,
+    searchError,
 
     // Computed
     currentMoleculeName,
@@ -479,6 +567,8 @@ export function useMoleculeViewer() {
     // Methods
     initViewer: waitForLibraryAndInit,
     loadMolecule,
+    searchPDB,
+    clearSearchError,
     setStyle,
     setColorScheme,
     setBackground,

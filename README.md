@@ -16,23 +16,29 @@ This application demonstrates professional-grade molecular visualization using W
 
 ### Core Visualization
 - **WebGL-Powered Rendering**: Hardware-accelerated 3D graphics using 3Dmol.js
-- **Multiple Molecules**: Caffeine, Aspirin, Glucose, Ethanol (loaded from PDB database)
+- **PDB Database Search**: Load ANY molecule from the RCSB Protein Data Bank (200,000+ structures)
+- **Preset Molecules**: Caffeine, Aspirin, Glucose, Ethanol for quick demos
 - **Visualization Styles**: Stick, Sphere, Line, Cross representations
 - **Color Schemes**: Jmol (CPK), Carbon, Spectrum, Chain coloring
 - **Background Options**: White, Black, Gray backgrounds
 
 ### Interactive Tools
-- **Atom Selection**: Click atoms to view element name, position, residue, and chain info
-- **Distance Measurement**: Measure distances between atoms in Angstroms (Å)
+- **Atom Selection**: Click atoms to view element name (full name, e.g., "Oxygen"), position, residue, and chain info
+- **Distance Measurement**: Measure distances between atoms in Angstroms (Å) with guided instructions
 - **Auto-Rotate**: Continuous Y-axis rotation for presentation
-- **Atom Labels**: Display element symbols on atoms (optimized for performance)
+- **Atom Labels**: Display element symbols on atoms (optimized for performance, max 50 labels)
 - **Screenshot Export**: Save current view as PNG
+- **Comparison Mode**: Side-by-side split-screen view for comparing two molecules
 
 ### User Experience
+- **Dark Modern UI**: Sleek dark theme with frosted glass effects and blue accents
+- **Collapsible Controls**: Accordion-style control panels for better space management
+- **Quick Tools Bar**: Essential tools (Spin, Measure, Labels, Reset, Screenshot, Compare) accessible below the viewer
 - **Keyboard Shortcuts**: Full keyboard control (press `?` for help)
-- **Responsive Design**: Works on desktop, tablet, and mobile
+- **Responsive Design**: Works on desktop, tablet, and mobile with proper breakpoints
 - **Loading States**: Visual feedback during molecule loading
 - **Intuitive Measure Mode**: Step-by-step instructions for distance measurement
+- **Error Handling**: Clear error messages for invalid PDB IDs or failed loads
 
 ## Tech Stack
 
@@ -49,6 +55,7 @@ The project follows enterprise-grade architecture patterns:
 ```
 app/
 ├── app.vue                    # Main application component
+├── assets/css/main.css        # Global styles and resets
 ├── types/                     # TypeScript type definitions
 │   └── molecule.ts            # Interfaces for atoms, molecules, viewer
 ├── constants/                 # Configuration and data
@@ -58,7 +65,7 @@ app/
 │   └── useKeyboardShortcuts.ts # Keyboard event handling
 └── components/
     ├── ui/                    # Generic reusable components
-    │   ├── ControlCard.vue    # Card container
+    │   ├── ControlCard.vue    # Collapsible card container
     │   ├── ButtonGroup.vue    # Selection button group
     │   └── ActionButton.vue   # Action button with icon
     └── molecules/             # Domain-specific components
@@ -67,7 +74,10 @@ app/
         ├── AtomInfoCard.vue   # Selected atom information
         ├── MeasurementCard.vue # Distance measurement display
         ├── LoadingOverlay.vue # Loading spinner
-        └── ControlPanel.vue   # All control sections
+        ├── ControlPanel.vue   # All control sections
+        ├── PdbSearch.vue      # PDB database search input
+        ├── ComparisonMode.vue # Split-screen comparison view
+        └── SingleViewer.vue   # Reusable viewer for comparison
 ```
 
 ### Design Principles
@@ -89,7 +99,7 @@ app/
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/molecular-viz.git
+git clone https://github.com/chrisobo98/molecular-viz.git
 cd molecular-viz
 
 # Install dependencies
@@ -189,6 +199,7 @@ const {
   measureMode,          // Measure mode state
   selectedAtom,         // Currently selected atom
   measurementDistance,  // Measured distance
+  searchError,          // PDB search error message
 
   // Computed
   currentMoleculeName,  // Display name of current molecule
@@ -196,7 +207,10 @@ const {
   hasFirstAtom,         // Whether first measurement atom is selected
 
   // Methods
-  loadMolecule,         // Load molecule by ID
+  initViewer,           // Initialize/reinitialize the viewer
+  loadMolecule,         // Load preset molecule by ID
+  searchPDB,            // Search and load from PDB database
+  clearSearchError,     // Clear search error message
   setStyle,             // Set visualization style
   setColorScheme,       // Set color scheme
   setBackground,        // Set background color
@@ -208,6 +222,28 @@ const {
   takeScreenshot        // Export as PNG
 } = useMoleculeViewer()
 ```
+
+## PDB Database Search
+
+Search and load any molecule from the RCSB Protein Data Bank:
+
+```typescript
+// Search for a molecule by PDB ID
+await searchPDB('1CRN')  // Crambin protein
+await searchPDB('4HHB')  // Hemoglobin
+await searchPDB('1BNA')  // DNA double helix
+```
+
+### Popular PDB IDs to Try
+
+| PDB ID | Molecule | Description |
+|--------|----------|-------------|
+| 1CRN | Crambin | Small plant protein (46 residues) |
+| 4HHB | Hemoglobin | Oxygen-carrying protein |
+| 1BNA | B-DNA | Classic DNA double helix |
+| 2POR | Porin | Membrane channel protein |
+| 1GFL | GFP | Green fluorescent protein |
+| 3J3Y | Ribosome | Large macromolecular complex |
 
 ## Molecules Data
 
